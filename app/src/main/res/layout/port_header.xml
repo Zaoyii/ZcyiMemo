@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:padding="10dp"
+    android:background="@color/white"
     tools:context=".Pager.Activity.MemoInfoActivity">
 
     <ImageView

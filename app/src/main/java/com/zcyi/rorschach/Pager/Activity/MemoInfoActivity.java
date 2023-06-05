@@ -126,7 +126,8 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         //设置点击事件
         header_back.setOnClickListener(this);
         header_save.setOnClickListener(this);
-
+        oldContent = "";
+        oldTitle = "";
         //设置header标题
         Intent intent = getIntent();
         if (intent != null) {
@@ -151,6 +152,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                 oldContent = memo.getContent();
             }
         }
+
         Exit = new AlertDialog.Builder(Memo_title.getContext());
         Exit.setTitle("确定要退出吗？").setMessage("退出默认不保存备忘录！")
                 .setPositiveButton("确定", (dialog, which) -> {

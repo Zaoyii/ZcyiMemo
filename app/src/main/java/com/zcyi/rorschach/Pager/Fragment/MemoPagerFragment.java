@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.zcyi.rorschach.Adapter.Memo_Adapter;
+import com.zcyi.rorschach.Adapter.MemoAdapter;
 import com.zcyi.rorschach.Dao.MemoDao;
 import com.zcyi.rorschach.DataBase.BaseRoomDatabase;
 import com.zcyi.rorschach.DataBase.InstanceDatabase;
@@ -30,7 +30,6 @@ import com.zcyi.rorschach.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MemoPagerFragment extends Fragment implements View.OnClickListener {
 
@@ -39,13 +38,13 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     //ui控件
     ImageView add_memo;
     TextView isnull;
-    RecyclerView memo_recycler;
-    LinearLayout memo_Lin;
+    RecyclerView memoRecycler;
+    LinearLayout memoLin;
     //数据库操作
     BaseRoomDatabase baseRoomDatabase;
     MemoDao memoDao;
     //adapter
-    Memo_Adapter memo_adapter;
+    MemoAdapter memoAdapter;
     boolean isEditing;
 
     @Nullable
@@ -69,8 +68,8 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         //get id
         add_memo = v.findViewById(R.id.memo_add);
         add_memo.setOnClickListener(this);
-        memo_recycler = v.findViewById(R.id.memo_List_recycler);
-        memo_Lin = v.findViewById(R.id.memo_list_lin);
+        memoRecycler = v.findViewById(R.id.memo_List_recycler);
+        memoLin = v.findViewById(R.id.memo_list_lin);
         isnull = v.findViewById(R.id.Null);
         //获取roomDataBase实例
         baseRoomDatabase = InstanceDatabase.getInstance(getContext());
@@ -83,18 +82,18 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     private int getMemoList() {
         List<Memo> memos = memoDao.selectAll();
         if (memos.size() > 0) {
-            memo_adapter = new Memo_Adapter(getContext(), (ArrayList<Memo>) memos,memoDao);
+            memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos,memoDao);
             StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-            memo_recycler.setAdapter(memo_adapter);
-            memo_recycler.setLayoutManager(memoManager);
+            memoRecycler.setAdapter(memoAdapter);
+            memoRecycler.setLayoutManager(memoManager);
             //隐藏无备忘录提示
             isnull.setVisibility(View.GONE);
-            memo_Lin.setVisibility(View.VISIBLE);
+            memoLin.setVisibility(View.VISIBLE);
 
         } else {
             //显示无备忘录提示，隐藏list
             isnull.setVisibility(View.VISIBLE);
-            memo_Lin.setVisibility(View.GONE);
+            memoLin.setVisibility(View.GONE);
         }
         return memos.size();
     }
@@ -120,7 +119,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
             switch (menuItem.getItemId()) {
                 case R.id.memo_edit:
                     if (isEditing) {
-                        memo_adapter.setVisibility(false);
+                        memoAdapter.setVisibility(false);
                         isEditing = false;
                     } else {
                         isEditing = true;
@@ -128,7 +127,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                             Toast.makeText(getContext(), "没有能编辑的备忘录哦~", Toast.LENGTH_SHORT).show();
                         } else {
                             //编辑
-                            memo_adapter.setVisibility(true);
+                            memoAdapter.setVisibility(true);
                         }
                     }
 

@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical">
 
     <include layout="@layout/port_header" />
@@ -10,7 +9,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
@@ -18,8 +16,10 @@
             android:layout_height="60dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:background="@color/white"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,7 +36,6 @@
                 android:textColor="@color/black"
                 android:textSize="22sp" />
 
-
             <Button
                 android:id="@+id/time_picker"
                 android:layout_width="wrap_content"
@@ -46,12 +45,16 @@
                 android:text="@string/pickTime" />
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
-            android:orientation="vertical">
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,6 +63,12 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/Alarm"
                 android:textSize="20sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@color/underline" />
 
             <EditText
                 android:id="@+id/Alarm_content"
@@ -72,18 +81,6 @@
                 android:maxLength="8"
                 android:padding="10dp" />
 
-            <Button
-                android:id="@+id/submit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/mainColor"
-                android:elevation="5dp"
-                android:text="@string/submit" />
         </LinearLayout>
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="200dp" />
     </LinearLayout>
 </LinearLayout>

@@ -26,6 +26,17 @@ public class Alarm {
         this.state = state;
     }
 
+    @Override
+    public String toString() {
+        return "Alarm{" +
+                "alarmId=" + alarmId +
+                ", alarmTime='" + alarmTime + '\'' +
+                ", alarmTimeMillis=" + alarmTimeMillis +
+                ", alarmContent='" + alarmContent + '\'' +
+                ", state=" + state +
+                '}';
+    }
+
     public Integer getAlarmId() {
         return alarmId;
     }

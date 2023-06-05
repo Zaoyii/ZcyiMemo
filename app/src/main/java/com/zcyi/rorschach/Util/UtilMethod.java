@@ -1,7 +1,12 @@
 package com.zcyi.rorschach.Util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.View;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class UtilMethod {
     //设置状态栏字体颜色
@@ -16,4 +21,12 @@ public class UtilMethod {
         }
 
     }
+
+    public static long dateToStamp(String time) throws ParseException {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = simpleDateFormat.parse(time);
+        assert date != null;
+        return date.getTime();
+    }
+
 }

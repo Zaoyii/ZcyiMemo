@@ -22,6 +22,6 @@
     <string name="Alarm">提示信息</string>
     <string name="pickTime">选择时间</string>
     <string name="submit">提交</string>
-    <string name="sub">|  </string>
     <string name="alarm_state">未提醒</string>
+    <string name="test">未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒</string>
 </resources>

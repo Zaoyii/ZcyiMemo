@@ -1,11 +1,18 @@
 package com.zcyi.rorschach.Pager.Activity;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+import static com.zcyi.rorschach.Util.UtilMethod.dateToStamp;
+
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,23 +26,25 @@ import com.github.gzuliyujiang.wheelpicker.annotation.DateMode;
 import com.github.gzuliyujiang.wheelpicker.annotation.TimeMode;
 import com.github.gzuliyujiang.wheelpicker.entity.DatimeEntity;
 import com.github.gzuliyujiang.wheelpicker.widget.DatimeWheelLayout;
+import com.zcyi.rorschach.BroadcastRec.AlarmBroadcast;
 import com.zcyi.rorschach.Dao.AlarmDao;
 import com.zcyi.rorschach.DataBase.BaseRoomDatabase;
 import com.zcyi.rorschach.DataBase.InstanceDatabase;
 import com.zcyi.rorschach.Entity.Alarm;
 import com.zcyi.rorschach.R;
+import com.zcyi.rorschach.Util.UtilMethod;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class AlarmMeActivity extends AppCompatActivity implements View.OnClickListener {
     Button timePicker;
-    Button submit;
+    ImageView save;
+    ImageView back;
     TextView alarmTime;
     EditText alarmContent;
     Long alarmTimeMillis;
 
+    AlarmManager alarmManager;
     BaseRoomDatabase baseRoomDatabase;
     AlarmDao alarmDao;
 
@@ -47,13 +56,15 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-
+        UtilMethod.changeStatusBarFrontColor(true, this);
         timePicker = findViewById(R.id.time_picker);
         alarmContent = findViewById(R.id.Alarm_content);
-        submit = findViewById(R.id.submit);
+        save = findViewById(R.id.header_save);
+        back = findViewById(R.id.header_back);
         alarmTime = findViewById(R.id.alarm_time);
         timePicker.setOnClickListener(this);
-        submit.setOnClickListener(this);
+        back.setOnClickListener(this);
+        save.setOnClickListener(this);
         TextView header_title = findViewById(R.id.header_title);
         DialogConfig.setDialogStyle(DialogStyle.Three);
         Intent intent = getIntent();
@@ -63,14 +74,14 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
         //获取RoomDatabase实例
         baseRoomDatabase = InstanceDatabase.getInstance(this);
         alarmDao = baseRoomDatabase.getAlarmDao();
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     }
 
     public void testTimePicker() {
         DatimePicker picker = new DatimePicker(this);
         final DatimeWheelLayout wheelLayout = picker.getWheelLayout();
         picker.setOnDatimePickedListener((year, month, day, hour, minute, second) -> {
-            String text = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-            text += wheelLayout.getTimeWheelLayout().isAnteMeridiem() ? " 上午" : " 下午";
+            String text = year + "-" + month + "-" + day + " " + hour + ":" + minute;
             alarmTime.setText(text);
             try {
                 System.out.println(dateToStamp(text));
@@ -101,12 +112,6 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    public long dateToStamp(String time) throws ParseException {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = simpleDateFormat.parse(time);
-        assert date != null;
-        return date.getTime();
-    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -115,16 +120,29 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.time_picker:
                 testTimePicker();
                 break;
-            case R.id.submit:
+            case R.id.header_save:
                 if (alarmTime.getText().toString().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "未选择时间!", Toast.LENGTH_SHORT).show();
                 } else {
                     if (alarmTimeMillis > System.currentTimeMillis()) {
+                        int result = (int) (alarmTimeMillis / 1000 / 60);
+                        System.out.println(alarmTimeMillis + "-=-=--=--=-=--result" + result);
+                        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis,
+                                100, // 时间误差范围 100毫秒
+                                PendingIntent.getBroadcast(getApplication(), result,
+                                        new Intent(getApplication(), AlarmBroadcast.class), FLAG_IMMUTABLE));
+                        Toast.makeText(getApplicationContext(), "~~~~~~!", Toast.LENGTH_SHORT).show();
                         alarmDao.addAlarm(new Alarm(alarmTime.getText().toString(), alarmTimeMillis, alarmContent.getText().toString(), 1));
+                        Toast.makeText(getApplicationContext(), "添加成功!", Toast.LENGTH_SHORT).show();
+                        finish();
+
                     } else {
                         Toast.makeText(getApplicationContext(), "时间选择有误!", Toast.LENGTH_SHORT).show();
                     }
                 }
+                break;
+            case R.id.header_back:
+                finish();
                 break;
         }
     }
