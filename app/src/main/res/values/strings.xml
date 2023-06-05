@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">随便记记8</string>
+    <string name="skip">跳过</string>
+    <string name="alarmClockNull">未添加任何提醒哦~</string>
+    <string name="memoNull">未添加任何备忘录哦~</string>
+    <string name="memo">备忘录</string>
+    <string name="addmemo">添加备忘录</string>
+    <string name="addMemoHint">输入备忘录~</string>
+    <string name="clearMemo">清空备忘录</string>
+    <string name="edit">编辑</string>
+    <string name="AlertMe">提醒我</string>
+    <string name="cancelEdit">取消编辑</string>
+    <string name="title">标题(最长20字符)</string>
+    <string name="time_test">12:25</string>
+    <string name="edit_state_editing">编辑中</string>
+    <string name="createTime">创建时间:</string>
+    <string name="saveTime">上次保存:</string>
+</resources>

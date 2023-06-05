@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="LuoTuoZi">#845EC2</color>
+    <color name="YuanShanQing">#008F7A</color>
+    <color name="mainColor">#FFC1B3</color>
+    <color name="gradient">#FFBB89</color>
+    <color name="underline">#bb959595</color>
+    <color name="time_second">#B1B1B1</color>
+</resources>

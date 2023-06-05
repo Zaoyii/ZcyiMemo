@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/memo"
+        android:icon="@drawable/ic_note_24"
+        android:title="@string/memo" />
+    <item
+        android:id="@+id/alarmClock"
+        android:icon="@drawable/ic_alarm_clock_24"
+        android:title="@string/AlertMe" />
+
+</menu>
