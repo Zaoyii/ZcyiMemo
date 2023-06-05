@@ -38,8 +38,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     View v;
     //ui控件
     ImageView add_memo;
-
-    ImageView memo_delete;
     TextView isnull;
     RecyclerView memo_recycler;
     LinearLayout memo_Lin;
@@ -70,8 +68,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
 
         //get id
         add_memo = v.findViewById(R.id.memo_add);
-        memo_delete = v.findViewById(R.id.memo_delete);
-        memo_delete.setOnClickListener(this);
         add_memo.setOnClickListener(this);
         memo_recycler = v.findViewById(R.id.memo_List_recycler);
         memo_Lin = v.findViewById(R.id.memo_list_lin);
@@ -124,7 +120,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
             switch (menuItem.getItemId()) {
                 case R.id.memo_edit:
                     if (isEditing) {
-                        memo_delete.setVisibility(View.GONE);
                         memo_adapter.setVisibility(false);
                         isEditing = false;
                     } else {
@@ -134,7 +129,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                         } else {
                             //编辑
                             memo_adapter.setVisibility(true);
-                            memo_delete.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -145,7 +139,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                     } else {
                         //删除
                         memoDao.DeleteAllMemo();
-                        memo_delete.setVisibility(View.GONE);
                         getMemoList();
                     }
                     break;
@@ -154,4 +147,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         });
         popupMenu.show();
     }
+
+
 }

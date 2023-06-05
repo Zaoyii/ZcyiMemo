@@ -17,6 +17,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.zcyi.rorschach.Pager.Fragment.AlarmMePagerFragment;
 import com.zcyi.rorschach.Pager.Fragment.MemoPagerFragment;
+import com.zcyi.rorschach.Util.UtilMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
     }
     private void init() {
-
+        UtilMethod.changeStatusBarFrontColor(true, this);
         List<Fragment> list = new ArrayList<>();
         list.add(new MemoPagerFragment());
         list.add(new AlarmMePagerFragment());

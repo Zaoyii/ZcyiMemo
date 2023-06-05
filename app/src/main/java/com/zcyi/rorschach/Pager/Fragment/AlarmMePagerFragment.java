@@ -35,6 +35,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.zcyi.rorschach.MainActivity;
+import com.zcyi.rorschach.Pager.Activity.AlarmMeActivity;
 import com.zcyi.rorschach.R;
 
 import java.util.Objects;
@@ -48,16 +49,17 @@ public class AlarmMePagerFragment extends Fragment {
     private static final String ALARM_ACTION = "SAVE_HISTORY_DATA_ACTION";
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
+    long singleTimeInMillis = 0;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_alarmclock, container, false);
-        v.findViewById(R.id.clock_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alarmClockTest();
-            }
+        v.findViewById(R.id.clock_add).setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AlarmMeActivity.class);
+            intent.putExtra("title", "添加提醒");
+            startActivity(intent);
+
         });
 
         return v;
@@ -90,7 +92,7 @@ public class AlarmMePagerFragment extends Fragment {
         }
 
         AlarmManager alarm = (AlarmManager) v.getContext().getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5 * 1000,0, sender);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5 * 1000, 0, sender);
     }
 
     public void Notification() {
@@ -123,8 +125,6 @@ public class AlarmMePagerFragment extends Fragment {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
             startActivity(intent);
         }
-
-
     }
 
     private static void playNotificationRing(Context context) {
@@ -147,5 +147,4 @@ public class AlarmMePagerFragment extends Fragment {
         vibrator.vibrate(VibrationEffect.createWaveform(times, -1));
         Log.e(TAG, "playNotificationVibrate: 执行震动");
     }
-
 }

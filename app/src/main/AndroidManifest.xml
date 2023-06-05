@@ -16,6 +16,9 @@
         android:theme="@style/Theme.ZcyiMemo"
         tools:targetApi="31">
         <activity
+            android:name=".Pager.Activity.AlarmMeActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -24,9 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Pager.Activity.MemoInfoActivity"
-            android:windowSoftInputMode="stateVisible"
-            />
+        <activity
+            android:name=".Pager.Activity.MemoInfoActivity"
+            android:windowSoftInputMode="stateVisible" />
+
     </application>
 
 </manifest>

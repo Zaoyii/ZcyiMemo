@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="trans">#00FFFFFF</color>
     <color name="LuoTuoZi">#845EC2</color>
     <color name="YuanShanQing">#008F7A</color>
     <color name="mainColor">#FFC1B3</color>

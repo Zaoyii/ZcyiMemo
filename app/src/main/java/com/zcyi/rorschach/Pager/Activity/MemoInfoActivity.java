@@ -8,6 +8,7 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +33,6 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     private EditText Memo_title;
     private EditText Memo_content;
 
-    private TextView Save_time;
     private String oldTitle;
     private String oldContent;
     //数据库操作
@@ -58,7 +58,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.header_back:
-                Exit.show();
+                listenBack();
                 break;
             case R.id.header_save:
                 if (submit()) {
@@ -102,10 +102,9 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                 List<Memo> memos = memoDao.selectAll();
                 System.out.println(memos + "_+_+-=-=-=--=");
                 Log.e(Constant.TAG, "saveMessage: 调用update");
-            }else {
+            } else {
                 Log.e(Constant.TAG, "saveMessage：内容未发生改变，不调用update");
             }
-
         }
     }
 
@@ -118,7 +117,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         TextView open_time = findViewById(R.id.open_time);
         Memo_title = findViewById(R.id.Memo_title);
         Memo_content = findViewById(R.id.Memo_content);
-        Save_time = findViewById(R.id.save_time);
+        TextView save_time = findViewById(R.id.save_time);
 
         //获取RoomDatabase实例
         baseRoomDatabase = InstanceDatabase.getInstance(this);
@@ -147,7 +146,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                 Memo_title.setText(memo.getTitle());
                 Memo_content.setText(memo.getContent());
                 open_time.setText(memo.getCreateTime());
-                Save_time.setText(memo.getSaveTime());
+                save_time.setText(memo.getSaveTime());
                 oldTitle = memo.getTitle();
                 oldContent = memo.getContent();
             }
@@ -165,5 +164,21 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
 
     public void ShowToast(String info) {
         Toast.makeText(getApplication(), info, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            listenBack();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void listenBack() {
+        if (!(oldTitle.equals(Memo_title.getText().toString().trim()) && oldContent.equals(Memo_content.getText().toString().trim()))) {
+            Exit.show();
+        } else {
+            finish();
+        }
     }
 }

@@ -17,4 +17,11 @@
     <string name="saveTime">上次保存:</string>
     <string name="testTime">2022.9.1</string>
     <string name="delete">删除</string>
+    <string name="Time">时间:</string>
+    <string name="addAlarmText">输入提示信息</string>
+    <string name="Alarm">提示信息</string>
+    <string name="pickTime">选择时间</string>
+    <string name="submit">提交</string>
+    <string name="sub">|  </string>
+    <string name="alarm_state">未提醒</string>
 </resources>
