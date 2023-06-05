@@ -15,4 +15,6 @@
     <string name="edit_state_editing">编辑中</string>
     <string name="createTime">创建时间:</string>
     <string name="saveTime">上次保存:</string>
+    <string name="testTime">2022.9.1</string>
+    <string name="delete">删除</string>
 </resources>

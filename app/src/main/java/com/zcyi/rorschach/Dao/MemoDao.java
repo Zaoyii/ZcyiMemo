@@ -23,6 +23,10 @@ public interface MemoDao {
     @Update
     int updateMemo(Memo memo);
 
+//    @Query("UPDATE t_memo SET memoTitle= :title,memoContent= :content,memoSaveTime= :saveTime WHERE wordname = :wordname")
+//    int updateMemoById(Memo memo);
+
+
     @Delete
     int DeleteMemo(Memo memo);
 

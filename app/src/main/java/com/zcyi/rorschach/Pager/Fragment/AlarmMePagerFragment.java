@@ -1,21 +1,27 @@
 package com.zcyi.rorschach.Pager.Fragment;
 
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioAttributes;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +35,7 @@ import androidx.fragment.app.Fragment;
 
 import com.zcyi.rorschach.MainActivity;
 import com.zcyi.rorschach.R;
+import com.zcyi.rorschach.Util.Constant;
 
 import java.util.Objects;
 
@@ -38,6 +45,9 @@ public class AlarmMePagerFragment extends Fragment {
     View v;
     NotificationManager manager;
     Notification notification;
+    private static final String ALARM_ACTION = "SAVE_HISTORY_DATA_ACTION";
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
 
     @Nullable
     @Override
@@ -46,11 +56,37 @@ public class AlarmMePagerFragment extends Fragment {
         v.findViewById(R.id.clock_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Notification();
+                alarmClockTest();
             }
         });
 
         return v;
+    }
+
+    private BroadcastReceiver alarmReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //定时任务
+            //todo
+            Log.e("zcyi", "onReceive: 执行保存历史数据");
+
+            //如果版本高于4.4，需要重新设置闹钟
+
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000 * 5, alarmIntent);
+
+        }
+    };
+
+    public void alarmClockTest() {
+        Log.e(Constant.TAG, "alarmClockTest: 调用" );
+        IntentFilter intentFilter = new IntentFilter(ALARM_ACTION);
+        v.getContext().registerReceiver(alarmReceiver, intentFilter);
+        alarmMgr = (AlarmManager) v.getContext().getSystemService(Context.ALARM_SERVICE);
+
+        alarmIntent = PendingIntent.getBroadcast(v.getContext(), 0, new Intent(ALARM_ACTION), 0);
+        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() +
+                        5 * 1000, alarmIntent);
     }
 
     public void Notification() {
@@ -100,7 +136,7 @@ public class AlarmMePagerFragment extends Fragment {
      */
     private static void playNotificationVibrate(Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(5000,10));
+        vibrator.vibrate(VibrationEffect.createOneShot(5000, 10));
     }
 
 }

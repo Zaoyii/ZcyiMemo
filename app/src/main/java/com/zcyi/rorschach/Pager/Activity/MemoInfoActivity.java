@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,8 +22,10 @@ import com.zcyi.rorschach.DataBase.BaseRoomDatabase;
 import com.zcyi.rorschach.DataBase.InstanceDatabase;
 import com.zcyi.rorschach.Entity.Memo;
 import com.zcyi.rorschach.R;
+import com.zcyi.rorschach.Util.Constant;
 
 import java.util.Date;
+import java.util.List;
 
 public class MemoInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,7 +33,8 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     private EditText Memo_content;
 
     private TextView Save_time;
-
+    private String oldTitle;
+    private String oldContent;
     //数据库操作
     BaseRoomDatabase baseRoomDatabase;
     MemoDao memoDao;
@@ -64,15 +68,6 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        if (!(TextUtils.isEmpty(Memo_content.getText().toString().trim()) && TextUtils.isEmpty(Memo_title.getText().toString().trim()))) {
-            submit();
-        }
-
-        super.onDestroy();
-    }
-
     //保存Memo
 
     private boolean submit() {
@@ -90,15 +85,27 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void saveMessage() {
+        Log.e(Constant.TAG, "saveMessage: " + isSaved);
         if (!isSaved) {
             String title = Memo_title.getText().toString().trim();
             String content = Memo_content.getText().toString().trim();
             memoDao.addMemo(new Memo(title, content, createTime, simpleDateFormat.format(new Date(System.currentTimeMillis()))));
+            Log.e(Constant.TAG, "saveMessage: 调用add");
         } else {
-            memo.setTitle(Memo_title.getText().toString().trim());
-            memo.setContent(Memo_content.getText().toString().trim());
-            memo.setSaveTime(simpleDateFormat.format(new Date(System.currentTimeMillis())));
-            memoDao.updateMemo(memo);
+            if (!(oldTitle.equals(Memo_title.getText().toString().trim()) && oldContent.equals(Memo_content.getText().toString().trim()))) {
+                System.out.println(memo.getMemoId() + "--==--=-===--=");
+                memo.setTitle(Memo_title.getText().toString().trim());
+                memo.setContent(Memo_content.getText().toString().trim());
+                memo.setSaveTime(simpleDateFormat.format(new Date(System.currentTimeMillis())));
+                memoDao.updateMemo(memo);
+                System.out.println(memo.getMemoId() + "--==--=-===--=");
+                List<Memo> memos = memoDao.selectAll();
+                System.out.println(memos + "_+_+-=-=-=--=");
+                Log.e(Constant.TAG, "saveMessage: 调用update");
+            }else {
+                Log.e(Constant.TAG, "saveMessage：内容未发生改变，不调用update");
+            }
+
         }
     }
 
@@ -136,10 +143,13 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
             } else {
                 header_title.setText("");
                 memo = (Memo) intent.getSerializableExtra("memo");
+                System.out.println(memo + "--==--=-===--=");
                 Memo_title.setText(memo.getTitle());
                 Memo_content.setText(memo.getContent());
                 open_time.setText(memo.getCreateTime());
                 Save_time.setText(memo.getSaveTime());
+                oldTitle = memo.getTitle();
+                oldContent = memo.getContent();
             }
         }
         Exit = new AlertDialog.Builder(Memo_title.getContext());

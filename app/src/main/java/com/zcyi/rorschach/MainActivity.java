@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void exit() {
         if (!isExit) {
             isExit = true;
-            Toast.makeText(getApplicationContext(), "再按就退出了宝贝~~~", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "再按就退出了~~~", Toast.LENGTH_SHORT).show();
             mHandler.sendEmptyMessageDelayed(0, 2000);
         } else {
             finish();

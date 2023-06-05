@@ -38,7 +38,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     View v;
     //ui控件
     ImageView add_memo;
-    ImageView memo_menu;
+
     ImageView memo_delete;
     TextView isnull;
     RecyclerView memo_recycler;
@@ -70,10 +70,8 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
 
         //get id
         add_memo = v.findViewById(R.id.memo_add);
-        memo_menu = v.findViewById(R.id.memo_menu);
         memo_delete = v.findViewById(R.id.memo_delete);
         memo_delete.setOnClickListener(this);
-        memo_menu.setOnClickListener(this);
         add_memo.setOnClickListener(this);
         memo_recycler = v.findViewById(R.id.memo_List_recycler);
         memo_Lin = v.findViewById(R.id.memo_list_lin);
@@ -89,7 +87,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     private int getMemoList() {
         List<Memo> memos = memoDao.selectAll();
         if (memos.size() > 0) {
-            memo_adapter = new Memo_Adapter(getContext(), (ArrayList<Memo>) memos);
+            memo_adapter = new Memo_Adapter(getContext(), (ArrayList<Memo>) memos,memoDao);
             StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             memo_recycler.setAdapter(memo_adapter);
             memo_recycler.setLayoutManager(memoManager);
@@ -108,32 +106,11 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.memo_add:
-                //跳转到添加备忘录Activity
-                Intent intent = new Intent(getContext(), MemoInfoActivity.class);
-                intent.putExtra("title", "添加备忘录");
-                intent.putExtra("isSaved", false);
-                startActivity(intent);
-                break;
-
-            case R.id.memo_menu:
-                showMenu(memo_menu);
-                break;
-
-            case R.id.memo_delete:
-                //编辑查看被选中的checkbox并删除对应Memo
-                Map<Integer, Boolean> checkboxList = memo_adapter.getCheckboxList();
-                ArrayList<Memo> list = memo_adapter.getList();
-                for (int i = 0; i < list.size(); i++) {
-                    if (Boolean.TRUE.equals(checkboxList.get(i))) {
-                        memoDao.DeleteMemo(list.get(i));
-                    }
-                }
-                isEditing=false;
-                memo_delete.setVisibility(View.GONE);
-                getMemoList();
-                break;
+        if (view.getId() == R.id.memo_add) {//跳转到添加备忘录Activity
+            Intent intent = new Intent(getContext(), MemoInfoActivity.class);
+            intent.putExtra("title", "添加备忘录");
+            intent.putExtra("isSaved", false);
+            startActivity(intent);
         }
     }
 
@@ -141,7 +118,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     private void showMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setGravity(Gravity.START);
-        int memo_menu_is_editing = isEditing ? R.menu.memo_menu_not_editing : R.menu.memo_menu_is_editing;
+        int memo_menu_is_editing = isEditing ? R.menu.memo_menu_not_editing : R.menu.memo_menu_delete;
         popupMenu.getMenuInflater().inflate(memo_menu_is_editing, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {

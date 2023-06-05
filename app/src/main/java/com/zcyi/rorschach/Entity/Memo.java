@@ -10,14 +10,15 @@ import java.io.Serializable;
 @Entity(tableName = "t_memo")
 public class Memo implements Serializable {
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "memo_id")
     Integer memoId;
-    @ColumnInfo(name = "memoTitle")
+    @ColumnInfo(name = "memo_title")
     String title;
-    @ColumnInfo(name = "memoContent")
+    @ColumnInfo(name = "memo_content")
     String content;
-    @ColumnInfo(name = "memoCreateTime")
+    @ColumnInfo(name = "memo_createTime")
     String createTime;
-    @ColumnInfo(name = "memoSaveTime")
+    @ColumnInfo(name = "memo_save_time")
     String saveTime;
 
     public Memo(String title, String content, String createTime, String saveTime) {

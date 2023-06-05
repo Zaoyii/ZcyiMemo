@@ -4,6 +4,7 @@
     android:id="@+id/item_memo_lin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="5dp"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
@@ -35,15 +36,17 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <CheckBox
-                    android:id="@+id/checkbox_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right" />
+                <ImageView
+                    android:id="@+id/memo_menu"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_menu_24" />
+
             </LinearLayout>
 
             <TextView
@@ -60,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="2022.9.1"
+                android:text="@string/testTime"
                 android:textColor="@color/time_second" />
         </LinearLayout>
 
