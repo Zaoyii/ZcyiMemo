@@ -6,15 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -115,7 +112,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     private void getMemoList() {
         List<Memo> memos = memoDao.selectAll();
         if (memos.size() > 0) {
-            memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao);
             memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao, () -> {
                 isnull.setVisibility(View.VISIBLE);
                 memoLin.setVisibility(View.GONE);
@@ -155,5 +151,5 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                 break;
         }
 
-
+    }
 }
