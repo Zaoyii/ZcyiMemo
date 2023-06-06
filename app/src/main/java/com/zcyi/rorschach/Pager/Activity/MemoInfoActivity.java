@@ -111,6 +111,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         UtilMethod.changeStatusBarFrontColor(true, this);
         //基础UI控件
+        UtilMethod.changeStatusBarFrontColor(true, this);
         ImageView header_back = findViewById(R.id.header_back);
         TextView header_title = findViewById(R.id.header_title);
         ImageView header_save = findViewById(R.id.header_save);

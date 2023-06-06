@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Pager.Activity.PlayAlarmAty" />
+        <activity android:name=".Pager.Activity.MidActivity" />
         <activity
             android:name=".Pager.Activity.MemoInfoActivity"
             android:windowSoftInputMode="stateVisible" />

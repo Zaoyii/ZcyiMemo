@@ -8,7 +8,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.github.gzuliyujiang.dialog.DialogConfig;
@@ -109,9 +112,7 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
         wheelLayout.getMinuteLabelView().setTextColor(ContextCompat.getColor(this, R.color.mainColor));
 
         picker.show();
-
     }
-
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -121,25 +122,33 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
                 testTimePicker();
                 break;
             case R.id.header_save:
-                if (alarmTime.getText().toString().isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "未选择时间!", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (alarmTimeMillis > System.currentTimeMillis()) {
-                        int result = (int) (alarmTimeMillis / 1000 / 60);
-                        System.out.println(alarmTimeMillis + "-=-=--=--=-=--result" + result);
-                        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis,
-                                100, // 时间误差范围 100毫秒
-                                PendingIntent.getBroadcast(getApplication(), result,
-                                        new Intent(getApplication(), AlarmBroadcast.class), FLAG_IMMUTABLE));
-                        Toast.makeText(getApplicationContext(), "~~~~~~!", Toast.LENGTH_SHORT).show();
-                        alarmDao.addAlarm(new Alarm(alarmTime.getText().toString(), alarmTimeMillis, alarmContent.getText().toString(), 1));
-                        Toast.makeText(getApplicationContext(), "添加成功!", Toast.LENGTH_SHORT).show();
-                        finish();
-
+                if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+                    if (alarmTime.getText().toString().isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "未选择时间!", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "时间选择有误!", Toast.LENGTH_SHORT).show();
+                        if (alarmTimeMillis > System.currentTimeMillis()) {
+                            int result = (int) (alarmTimeMillis / 1000 / 60);
+                            System.out.println(alarmTimeMillis + "-=-=--=--=-=--result" + result);
+                            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis,
+                                    100, // 时间误差范围 100毫秒
+                                    PendingIntent.getBroadcast(getApplication(), result,
+                                            new Intent(getApplication(), AlarmBroadcast.class), FLAG_IMMUTABLE));
+                            Toast.makeText(getApplicationContext(), "~~~~~~!", Toast.LENGTH_SHORT).show();
+                            alarmDao.addAlarm(new Alarm(alarmTime.getText().toString(), alarmTimeMillis, alarmContent.getText().toString(), 1));
+                            Toast.makeText(getApplicationContext(), "添加成功!", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "时间选择有误!", Toast.LENGTH_SHORT).show();
+                        }
                     }
+                } else {
+                    Toast.makeText(this, "先把通知权限全部打开~", Toast.LENGTH_SHORT).show();
+                    Uri packageURI = Uri.parse("package:" + this.getPackageName());
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+                    startActivity(intent);
                 }
+
                 break;
             case R.id.header_back:
                 finish();

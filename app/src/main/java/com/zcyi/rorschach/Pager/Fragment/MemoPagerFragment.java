@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,7 +62,9 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_memo, container, false);
+
         init();
+
         return v;
     }
 
@@ -80,6 +85,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
 
     private void init() {
 
+        //get id
         add_memo = v.findViewById(R.id.memo_add);
         convert = v.findViewById(R.id.convert);
         add_memo.setOnClickListener(this);
@@ -110,6 +116,11 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         List<Memo> memos = memoDao.selectAll();
         if (memos.size() > 0) {
             memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao);
+            memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao, () -> {
+                isnull.setVisibility(View.VISIBLE);
+                memoLin.setVisibility(View.GONE);
+            });
+            StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             memoRecycler.setAdapter(memoAdapter);
 
             //隐藏无备忘录提示
@@ -144,6 +155,5 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                 break;
         }
 
-    }
 
 }

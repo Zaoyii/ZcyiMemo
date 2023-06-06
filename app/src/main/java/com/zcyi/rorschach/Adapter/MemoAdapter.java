@@ -32,11 +32,13 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.Memo_ViewHolde
     int deleteId;
     AlertDialog.Builder Delete;
 
-    public MemoAdapter(Context context, ArrayList<Memo> list, MemoDao memoDao) {
+    AlarmAdapter.NullListener nullListener;
+
+    public MemoAdapter(Context context, ArrayList<Memo> list, MemoDao memoDao, AlarmAdapter.NullListener nullListener) {
         this.list = list;
         this.context = context;
         this.memoDao = memoDao;
-
+        this.nullListener = nullListener;
     }
 
     public ArrayList<Memo> getList() {
@@ -100,10 +102,12 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.Memo_ViewHolde
     }
 
     public void deleteCurrent() {
-        System.out.println(list + "-=-===-=" + deleteId);
         memoDao.DeleteMemo(list.get(deleteId));
         list.remove(deleteId);
         notifyDataSetChanged();
+        if (getList().size() == 0) {
+            nullListener.setNull();
+        }
     }
 
     @Override
