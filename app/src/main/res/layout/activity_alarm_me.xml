@@ -78,7 +78,9 @@
                 android:background="@null"
                 android:gravity="top"
                 android:hint="@string/addAlarmText"
-                android:maxLength="8"
+                android:inputType="text"
+                android:maxLength="30"
+                android:maxLines="1"
                 android:padding="10dp" />
 
         </LinearLayout>
