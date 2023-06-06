@@ -1,6 +1,7 @@
 package com.zcyi.rorschach;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -22,15 +23,17 @@ import com.zcyi.rorschach.Util.UtilMethod;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private ViewPager viewPager;
     boolean isExit = false;
-
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     Handler mHandler = new Handler(message -> {
         isExit = false;
         return false;
     });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,11 +41,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         init();
 
     }
+
     private void init() {
         UtilMethod.changeStatusBarFrontColor(true, this);
         List<Fragment> list = new ArrayList<>();
         list.add(new MemoPagerFragment());
         list.add(new AlarmMePagerFragment());
+        sharedPreferences = getSharedPreferences("zcyi", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        if (sharedPreferences.getInt("ListStyle", -1) == -1) {
+            editor.putInt("ListStyle", 1);
+            editor.apply();
+        }
 
         BottomNavigationView navigationView = findViewById(R.id.MainBNV);
         viewPager = findViewById(R.id.MainPager);
@@ -75,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -90,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return true;
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

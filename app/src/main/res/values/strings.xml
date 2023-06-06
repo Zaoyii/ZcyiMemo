@@ -23,5 +23,5 @@
     <string name="pickTime">选择时间</string>
     <string name="submit">提交</string>
     <string name="alarm_state">未提醒</string>
-    <string name="test">未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒未提醒</string>
+    <string name="convert">切换显示方式</string>
 </resources>

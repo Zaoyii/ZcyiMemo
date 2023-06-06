@@ -24,6 +24,7 @@ import com.zcyi.rorschach.DataBase.InstanceDatabase;
 import com.zcyi.rorschach.Entity.Memo;
 import com.zcyi.rorschach.R;
 import com.zcyi.rorschach.Util.Constant;
+import com.zcyi.rorschach.Util.UtilMethod;
 
 import java.util.Date;
 import java.util.List;
@@ -93,7 +94,6 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
             Log.e(Constant.TAG, "saveMessage: 调用add");
         } else {
             if (!(oldTitle.equals(Memo_title.getText().toString().trim()) && oldContent.equals(Memo_content.getText().toString().trim()))) {
-                System.out.println(memo.getMemoId() + "--==--=-===--=");
                 memo.setTitle(Memo_title.getText().toString().trim());
                 memo.setContent(Memo_content.getText().toString().trim());
                 memo.setSaveTime(simpleDateFormat.format(new Date(System.currentTimeMillis())));
@@ -109,7 +109,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initView() {
-        //UI控件
+        UtilMethod.changeStatusBarFrontColor(true, this);
         //基础UI控件
         ImageView header_back = findViewById(R.id.header_back);
         TextView header_title = findViewById(R.id.header_title);
