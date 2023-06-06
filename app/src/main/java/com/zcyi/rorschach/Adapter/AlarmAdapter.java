@@ -34,13 +34,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.Alarm_ViewHo
 
     AlertDialog.Builder Delete;
     AlarmManager am;
-
+    NullListener nullListener;
     int deleteId;
-    public AlarmAdapter(Context context, ArrayList<Alarm> list, AlarmDao AlarmDao) {
+
+    public AlarmAdapter(Context context, ArrayList<Alarm> list, AlarmDao AlarmDao, NullListener nullListener) {
         this.list = list;
         this.context = context;
         this.AlarmDao = AlarmDao;
+        this.nullListener = nullListener;
         am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
     }
 
     public ArrayList<Alarm> getList() {
@@ -94,6 +97,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.Alarm_ViewHo
         AlarmDao.DeleteAlarm(list.get(deleteId));
         list.remove(deleteId);
         notifyDataSetChanged();
+        if (getList().size() == 0) {
+            nullListener.setNull();
+        }
     }
 
     @Override
@@ -116,5 +122,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.Alarm_ViewHo
             Alarm_State = itemView.findViewById(R.id.alarm_state);
             Alarm_menu = itemView.findViewById(R.id.alarm_menu);
         }
+    }
+
+    public interface NullListener {
+        void setNull();
     }
 }

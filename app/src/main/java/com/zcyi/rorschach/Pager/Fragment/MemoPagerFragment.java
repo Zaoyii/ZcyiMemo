@@ -82,7 +82,10 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     private int getMemoList() {
         List<Memo> memos = memoDao.selectAll();
         if (memos.size() > 0) {
-            memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos,memoDao);
+            memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao, () -> {
+                isnull.setVisibility(View.VISIBLE);
+                memoLin.setVisibility(View.GONE);
+            });
             StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             memoRecycler.setAdapter(memoAdapter);
             memoRecycler.setLayoutManager(memoManager);

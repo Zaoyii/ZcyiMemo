@@ -69,14 +69,16 @@ public class AlarmMePagerFragment extends Fragment {
     private void getAlarmList() {
         List<Alarm> alarms = alarmDao.selectAll();
         if (alarms.size() > 0) {
-            alarmAdapter = new AlarmAdapter(getContext(), (ArrayList<Alarm>) alarms, alarmDao);
+            alarmAdapter = new AlarmAdapter(getContext(), (ArrayList<Alarm>) alarms, alarmDao, () -> {
+                isnull.setVisibility(View.VISIBLE);
+                alarm_recycler.setVisibility(View.GONE);
+            });
             LinearLayoutManager alarmManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
             alarm_recycler.setAdapter(alarmAdapter);
             alarm_recycler.setLayoutManager(alarmManager);
             //隐藏无备忘录提示
             isnull.setVisibility(View.GONE);
             alarm_recycler.setVisibility(View.VISIBLE);
-
         } else {
             //显示无备忘录提示，隐藏list
             isnull.setVisibility(View.VISIBLE);
