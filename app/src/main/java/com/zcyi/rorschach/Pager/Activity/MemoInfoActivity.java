@@ -24,6 +24,7 @@ import com.zcyi.rorschach.DataBase.InstanceDatabase;
 import com.zcyi.rorschach.Entity.Memo;
 import com.zcyi.rorschach.R;
 import com.zcyi.rorschach.Util.Constant;
+import com.zcyi.rorschach.Util.UtilMethod;
 
 import java.util.Date;
 import java.util.List;
@@ -111,6 +112,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         //UI控件
         //基础UI控件
+        UtilMethod.changeStatusBarFrontColor(true, this);
         ImageView header_back = findViewById(R.id.header_back);
         TextView header_title = findViewById(R.id.header_title);
         ImageView header_save = findViewById(R.id.header_save);
