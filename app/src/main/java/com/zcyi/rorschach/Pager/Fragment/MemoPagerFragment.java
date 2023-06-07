@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemoPagerFragment extends Fragment implements View.OnClickListener {
-
+    public static String TAG = "rorschach";
     //主视图
     View v;
     //ui控件
@@ -52,6 +53,8 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     SharedPreferences.Editor editor;
     StaggeredGridLayoutManager staggeredManager;
     LinearLayoutManager linearManager;
+
+    //0：瀑布流  1：线性列表
     int listStyle;
     List<Memo> memos;
 
@@ -59,9 +62,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_memo, container, false);
-
         init();
-
         return v;
     }
 
@@ -73,11 +74,12 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onPause() {
-        super.onPause();
         if (sharedPreferences.getInt("ListStyle", -1) != listStyle) {
             editor.putInt("ListStyle", listStyle);
             editor.apply();
         }
+        Log.e(TAG, "onPause:  editor.apply()  " + listStyle);
+        super.onPause();
     }
 
     private void init() {
@@ -101,26 +103,23 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         getMemoList();
         //根据ListStyle改变list展示方式
         listStyle = sharedPreferences.getInt("ListStyle", -1);
-        if (listStyle == 1 || listStyle == -1) {
-            memoRecycler.setLayoutManager(staggeredManager);
-        } else if (listStyle == 2) {
-            memoRecycler.setLayoutManager(linearManager);
+        if (memos.size() > 0) {
+            changeListStyle();
         }
-
     }
 
     private void getMemoList() {
         int size = memos.size();
         memos = memoDao.selectAll();
+        Log.e(TAG, "getMemoList: " + memos);
         if (size != memos.size()) {
             if (memos.size() > 0) {
-                memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao, () -> {
+                memoAdapter = new MemoAdapter((ArrayList<Memo>) memos, memoDao, () -> {
                     isnull.setVisibility(View.VISIBLE);
                     memoLin.setVisibility(View.GONE);
                 });
-                StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                 memoRecycler.setAdapter(memoAdapter);
-
+                changeListStyle();
                 //隐藏无备忘录提示
                 isnull.setVisibility(View.GONE);
                 memoLin.setVisibility(View.VISIBLE);
@@ -131,7 +130,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                 memoLin.setVisibility(View.GONE);
             }
         }
-
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -145,14 +143,23 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                 startActivity(intent);
                 break;
             case R.id.convert:
-                if (listStyle == 1) {
-                    listStyle = 2;
-                    memoRecycler.setLayoutManager(linearManager);
-                } else if (listStyle == 2) {
-                    listStyle = 1;
-                    memoRecycler.setLayoutManager(staggeredManager);
-                }
+                changeListStyle();
                 break;
+        }
+    }
+
+    public void changeListStyle() {
+        if (memos.size() != 0) {
+            Log.e(TAG, "changeListStyle: " + listStyle);
+            if (listStyle == 1) {
+                listStyle = 0;
+                memoAdapter.setSetImagePosition(0);
+                memoRecycler.setLayoutManager(staggeredManager);
+            } else if (listStyle == 0) {
+                listStyle = 1;
+                memoAdapter.setSetImagePosition(1);
+                memoRecycler.setLayoutManager(linearManager);
+            }
         }
 
     }

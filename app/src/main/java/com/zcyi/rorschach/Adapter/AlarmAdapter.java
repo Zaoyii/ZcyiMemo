@@ -59,7 +59,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.Alarm_ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull Alarm_ViewHolder holder, int position) {
-        System.out.println(list.get(position) + "-=-==-=-=--=");
         holder.Alarm_Content.setText(list.get(position).getAlarmContent());
         holder.Alarm_State.setText(list.get(position).getState() == 1 ? "未提醒" : "已提醒");
         holder.Alarm_Time.setText(list.get(position).getAlarmTime());
@@ -96,7 +95,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.Alarm_ViewHo
         am.cancel(PendingIntent.getBroadcast(context, (int) (list.get(deleteId).getAlarmTimeMillis() / 1000 / 60), new Intent(context, AlarmBroadcast.class), FLAG_IMMUTABLE));
         AlarmDao.DeleteAlarm(list.get(deleteId));
         list.remove(deleteId);
-        notifyDataSetChanged();
+        notifyItemRemoved(deleteId);
         if (getList().size() == 0) {
             nullListener.setNull();
         }

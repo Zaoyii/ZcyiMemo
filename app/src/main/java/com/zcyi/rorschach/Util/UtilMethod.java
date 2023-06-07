@@ -3,17 +3,13 @@ package com.zcyi.rorschach.Util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,16 +40,32 @@ public class UtilMethod {
         return date.getTime();
     }
 
+
+    public static String getPath(Context context, Uri srcUri) {
+        String path = context.getCacheDir() + "/" + System.currentTimeMillis() + ".png";//获取本地目录
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(srcUri);//context的方法获取URI文件输入流
+            if (inputStream == null) return "null";
+            OutputStream outputStream = Files.newOutputStream(Paths.get(path));
+            copyStream(inputStream, outputStream);//调用下面的方法存储
+            inputStream.close();
+            outputStream.close();
+            return path;//成功返回路径
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "null";//失败返回路径null
+        }
+    }
+
     private static void copyStream(InputStream input, OutputStream output) {//文件存储
         final int BUFFER_SIZE = 1024 * 2;
         byte[] buffer = new byte[BUFFER_SIZE];
         BufferedInputStream in = new BufferedInputStream(input, BUFFER_SIZE);
         BufferedOutputStream out = new BufferedOutputStream(output, BUFFER_SIZE);
-        int count = 0, n = 0;
+        int n;
         try {
             while ((n = in.read(buffer, 0, BUFFER_SIZE)) != -1) {
                 out.write(buffer, 0, n);
-                count += n;
             }
             out.flush();
             out.close();
@@ -63,50 +75,20 @@ public class UtilMethod {
         }
     }
 
-    public static String getPath(Context context, Uri srcUri) {
-        String path = context.getCacheDir() + "/" + System.currentTimeMillis() + ".png";//获取本地目录
-        File file = new File(path);
-        try {
-            InputStream inputStream = context.getContentResolver().openInputStream(srcUri);//context的方法获取URI文件输入流
-            if (inputStream == null) return "null";
-            OutputStream outputStream = Files.newOutputStream(Paths.get(path));
-            copyStream(inputStream, outputStream);//调用下面的方法存储
-            inputStream.close();
-            outputStream.close();
-            System.out.println("-=-=-=-=-=--=存储成功");
-            return path;//成功返回路径
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "null";//失败返回路径null
+    public static void ShowToast(Context context, String info) {
+        Toast.makeText(context, info, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void DeleteFile(String FileName) {
+        File file = new File(FileName);
+        if (!file.exists()) { // 要删除的文件不存在
+            System.out.println("文件" + FileName + "不存在，删除失败！");
+
+        } else { // 要删除的文件存在
+            if (file.isFile()) { // 如果目标文件是文件，判断是文件
+                System.out.println(file.delete() + "!!!");//删除文件
+            }
         }
     }
 
-    private void code(Context context, ImageView imageView) {
-        //将ImageView中的图片转换成Bitmap
-        imageView.buildDrawingCache();
-        Bitmap bitmap = imageView.getDrawingCache();
-//将Bitmap 转换成二进制，写入本地
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        File dir = new File("file://" + context.getCacheDir() + "/");
-        if (!dir.isFile()) {
-            dir.mkdir();
-        }
-        //makeCheckCode()  是随机的字符串当然你也可以写别的看项目需要
-        File file = new File(dir, System.currentTimeMillis() + ".png");
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(byteArray, 0, byteArray.length);
-            fos.flush();
-            //用广播通知相册进行更新相册
-        } catch (
-                FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 }

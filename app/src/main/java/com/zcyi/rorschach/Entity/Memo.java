@@ -3,7 +3,6 @@ package com.zcyi.rorschach.Entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -24,16 +23,6 @@ public class Memo implements Serializable {
     @ColumnInfo(name = "memo_save_time")
     String saveTime;
 
-    public Memo() {
-    }
-    @Ignore
-    public Memo(String title, String content, String createTime, String saveTime) {
-        this.title = title;
-        this.content = content;
-        this.createTime = createTime;
-        this.saveTime = saveTime;
-    }
-    @Ignore
     public Memo(String title, String content, String image, String createTime, String saveTime) {
         this.title = title;
         this.content = content;
@@ -96,6 +85,7 @@ public class Memo implements Serializable {
                 "memoId=" + memoId +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", image='" + image + '\'' +
                 ", createTime='" + createTime + '\'' +
                 ", saveTime='" + saveTime + '\'' +
                 '}';

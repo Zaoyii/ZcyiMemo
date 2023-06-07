@@ -35,7 +35,6 @@ import com.zcyi.rorschach.Util.Constant;
 import com.zcyi.rorschach.Util.UtilMethod;
 
 import java.util.Date;
-import java.util.List;
 
 public class MemoInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -44,8 +43,7 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     private ImageView imagePicker;
     private ImageView imageInsert;
 
-    private String oldTitle;
-    private String oldContent;
+
     //数据库操作
     BaseRoomDatabase baseRoomDatabase;
     MemoDao memoDao;
@@ -53,8 +51,11 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     String createTime;
     Memo memo;
     AlertDialog.Builder Exit;
-    Uri imgUri;
-    String imgPath;
+
+    private String oldTitle;
+    private String oldContent;
+
+    String oldImagePath;
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     boolean isSaved = false;
@@ -64,65 +65,6 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_memo);
         initView();
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.header_back:
-                listenBack();
-                break;
-            case R.id.header_save:
-                if (submit()) {
-                    finish();
-                }
-                break;
-            case R.id.pick_image:
-                showPickMenu(imagePicker);
-                break;
-        }
-    }
-
-    //保存Memo
-
-    private boolean submit() {
-        // validate
-        if (TextUtils.isEmpty(Memo_content.getText().toString().trim())) {
-            Toast.makeText(this, "内容为空不能保存哦", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (TextUtils.isEmpty(Memo_title.getText().toString().trim())) {
-            Toast.makeText(this, "标题为空不能保存哦", Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            saveMessage();
-            return true;
-        }
-    }
-
-    private void saveMessage() {
-        Log.e(Constant.TAG, "saveMessage: " + isSaved);
-        if (!isSaved) {
-            String title = Memo_title.getText().toString().trim();
-            String content = Memo_content.getText().toString().trim();
-            memoDao.addMemo(new Memo(title, content, imgPath, createTime, simpleDateFormat.format(new Date(System.currentTimeMillis()))));
-            Log.e(Constant.TAG, "saveMessage: 调用add");
-        } else {
-            if (!(oldTitle.equals(Memo_title.getText().toString().trim()) && oldContent.equals(Memo_content.getText().toString().trim()))) {
-                memo.setTitle(Memo_title.getText().toString().trim());
-                memo.setContent(Memo_content.getText().toString().trim());
-                memo.setSaveTime(simpleDateFormat.format(new Date(System.currentTimeMillis())));
-                memo.setImage(imgPath);
-                System.out.println(imgPath+"-=----=-=--=");
-                memoDao.updateMemo(memo);
-                System.out.println(memo.getMemoId() + "--==--=-===--=");
-                List<Memo> memos = memoDao.selectAll();
-                System.out.println(memos + "_+_+-=-=-=--=");
-                Log.e(Constant.TAG, "saveMessage: 调用update");
-            } else {
-                Log.e(Constant.TAG, "saveMessage：内容未发生改变，不调用update");
-            }
-        }
     }
 
     private void initView() {
@@ -164,17 +106,14 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
             } else {
                 header_title.setText("");
                 memo = (Memo) intent.getSerializableExtra("memo");
-                System.out.println(memo + "--==--=-===--=");
                 Memo_title.setText(memo.getTitle());
                 Memo_content.setText(memo.getContent());
                 open_time.setText(memo.getCreateTime());
                 save_time.setText(memo.getSaveTime());
                 oldTitle = memo.getTitle();
                 oldContent = memo.getContent();
-                System.out.println("--------file://" + memo.getImage());
+                oldImagePath = memo.getImage();
                 imageInsert.setImageURI(Uri.parse("file://" + memo.getImage()));
-                imgUri = Uri.parse(memo.getImage());
-
 
             }
         }
@@ -185,13 +124,62 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                     finish();
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
-                    ShowToast("取消");
+                    UtilMethod.ShowToast(getApplication(), "取消");
                     dialog.cancel();
                 });
     }
 
-    public void ShowToast(String info) {
-        Toast.makeText(getApplication(), info, Toast.LENGTH_SHORT).show();
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.header_back:
+                listenBack();
+                break;
+            case R.id.header_save:
+                if (submit()) {
+                    finish();
+                }
+                break;
+            case R.id.pick_image:
+                showPickMenu(imagePicker);
+                break;
+        }
+    }
+
+    //保存Memo
+    private boolean submit() {
+        // validate
+        if (TextUtils.isEmpty(Memo_content.getText().toString().trim())) {
+            Toast.makeText(this, "内容为空不能保存哦", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (TextUtils.isEmpty(Memo_title.getText().toString().trim())) {
+            Toast.makeText(this, "标题为空不能保存哦", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            saveMessage();
+            return true;
+        }
+    }
+
+    private void saveMessage() {
+        Log.e(Constant.TAG, "saveMessage: " + isSaved);
+        if (isSaved) {
+            if (!(oldTitle.equals(Memo_title.getText().toString().trim()) && oldContent.equals(Memo_content.getText().toString().trim()) && oldImagePath.equals(memo.getImage()))) {
+                memo.setTitle(Memo_title.getText().toString().trim());
+                memo.setContent(Memo_content.getText().toString().trim());
+                memo.setSaveTime(simpleDateFormat.format(new Date(System.currentTimeMillis())));
+                memo.setImage(oldImagePath);
+                memoDao.updateMemo(memo);
+            } else {
+                Log.e(Constant.TAG, "saveMessage：内容未发生改变，不调用update");
+            }
+        } else {
+            String title = Memo_title.getText().toString().trim();
+            String content = Memo_content.getText().toString().trim();
+            memoDao.addMemo(new Memo(title, content, oldImagePath, createTime, simpleDateFormat.format(new Date(System.currentTimeMillis()))));
+            Log.e(Constant.TAG, "saveMessage: 调用add");
+        }
     }
 
     @Override
@@ -235,7 +223,6 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                 case R.id.memo_camera:
                     onCamera(v);
                     break;
-
             }
             return false;
         });
@@ -246,20 +233,16 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         ImagePicker.getInstance().startCamera(this, true, new PickCallback() {
             @Override
             public void onPermissionDenied(String[] permissions, String message) {
-
                 Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void cropConfig(ActivityBuilder builder) {
-                builder.setMultiTouchEnabled(true)
-                        .setGuidelines(CropImageView.Guidelines.ON_TOUCH);
+                builder.setMultiTouchEnabled(true).setGuidelines(CropImageView.Guidelines.ON_TOUCH);
             }
 
             @Override
             public void onCropImage(@Nullable Uri imageUri) {
-                System.out.println(getApplication().getCacheDir() + "-=-=---=---=-");
-                System.out.println(imageUri + "-=-=---=---=-");
                 Toast.makeText(getApplication(), String.valueOf(imageUri), Toast.LENGTH_SHORT).show();
             }
         });
@@ -271,16 +254,12 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
             public void onPermissionDenied(String[] permissions, String message) {
                 Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onPickImage(@Nullable Uri imageUri) {
                 Toast.makeText(getApplication(), String.valueOf(imageUri), Toast.LENGTH_SHORT).show();
-                imgUri = imageUri;
-                imageInsert.setImageURI(imgUri);
-                System.out.println();
-                imgPath = UtilMethod.getPath(getApplication(), imgUri);
+                imageInsert.setImageURI(imageUri);
+                oldImagePath = UtilMethod.getPath(getApplication(), imageUri);
             }
         });
     }
-
 }

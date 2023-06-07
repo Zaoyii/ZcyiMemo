@@ -46,7 +46,6 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
     TextView alarmTime;
     EditText alarmContent;
     Long alarmTimeMillis;
-
     AlarmManager alarmManager;
     BaseRoomDatabase baseRoomDatabase;
     AlarmDao alarmDao;
@@ -87,7 +86,6 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
             String text = year + "-" + month + "-" + day + " " + hour + ":" + minute;
             alarmTime.setText(text);
             try {
-                System.out.println(dateToStamp(text));
                 alarmTimeMillis = dateToStamp(text);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -128,7 +126,6 @@ public class AlarmMeActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         if (alarmTimeMillis > System.currentTimeMillis()) {
                             int result = (int) (alarmTimeMillis / 1000 / 60);
-                            System.out.println(alarmTimeMillis + "-=-=--=--=-=--result" + result);
                             alarmManager.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis,
                                     100, // 时间误差范围 100毫秒
                                     PendingIntent.getBroadcast(getApplication(), result,

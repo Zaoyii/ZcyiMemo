@@ -45,7 +45,7 @@ import com.zcyi.rorschach.Util.UtilMethod;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private ViewPager viewPager;
     boolean isExit = false;
@@ -61,12 +61,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     BaseRoomDatabase baseRoomDatabase;
     AlarmDao alarmDao;
 
+    MemoPagerFragment memoPagerFragment;
+    AlarmMePagerFragment alarmMePagerFragment;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Handler mHandler = new Handler(message -> {
         isExit = false;
         return false;
     });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +77,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         init();
 
     }
+
     private void init() {
         UtilMethod.changeStatusBarFrontColor(true, this);
         List<Fragment> list = new ArrayList<>();
-        list.add(new MemoPagerFragment());
-        list.add(new AlarmMePagerFragment());
+        memoPagerFragment = new MemoPagerFragment();
+        alarmMePagerFragment = new AlarmMePagerFragment();
+
+        list.add(memoPagerFragment);
+        list.add(alarmMePagerFragment);
         baseRoomDatabase = InstanceDatabase.getInstance(this);
         alarmDao = baseRoomDatabase.getAlarmDao();
 
@@ -142,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -157,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return true;
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -173,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             mHandler.sendEmptyMessageDelayed(0, 2000);
         } else {
             finish();
-            System.exit(0);
         }
     }
 
@@ -214,15 +222,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }).create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
-
     }
 
     public void Notification() {
-        System.out.println("调用Notification------------------------");
-
         if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
             manager.notify(1, notification);
-            System.out.println("调用notify(1, notification);------------------------");
         } else {
             Toast.makeText(this, "先把通知权限打开~", Toast.LENGTH_SHORT).show();
             Uri packageURI = Uri.parse("package:" + this.getPackageName());
@@ -253,14 +257,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onDestroy() {
+
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release(); // 释放掉
+        }
+
         super.onDestroy();
-        mMediaPlayer.stop();
-        mMediaPlayer.release(); // 释放掉
+
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
         if (sharedPreferences.getBoolean("RingRing", false)) {
             System.out.println("调用AlarmMe----------");
             AlarmMe();
@@ -269,6 +277,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         // 唤醒屏幕
         acquireWakeLock();
+        super.onResume();
+
     }
 
     private void acquireWakeLock() {
@@ -291,8 +301,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onPause() {
-        super.onPause();
         // 释放锁屏
         releaseWakeLock();
+        super.onPause();
+
     }
 }
