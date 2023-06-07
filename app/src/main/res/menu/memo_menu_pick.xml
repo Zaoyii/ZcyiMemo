@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/memo_edit"
+        android:id="@+id/memo_gallery"
         android:icon="@drawable/logo"
-        android:title="@string/cancelEdit" />
+        android:title="@string/gallery" />
     <item
-        android:id="@+id/memo_clearALl"
+        android:id="@+id/memo_camera"
         android:icon="@drawable/logo"
-        android:title="@string/clearMemo" />
+        android:title="@string/camera" />
 
 </menu>

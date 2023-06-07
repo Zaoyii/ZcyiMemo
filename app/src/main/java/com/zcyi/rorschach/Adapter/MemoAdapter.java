@@ -26,7 +26,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.Memo_ViewHolde
 
     ArrayList<Memo> list;
     Context context;
-    boolean isVisibility = false;
 
     MemoDao memoDao;
     int deleteId;
@@ -43,10 +42,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.Memo_ViewHolde
 
     public ArrayList<Memo> getList() {
         return list;
-    }
-
-    public void setVisibility(boolean visibility) {
-        isVisibility = visibility;
     }
 
     @NonNull
@@ -101,10 +96,11 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.Memo_ViewHolde
         popupMenu.show();
     }
 
+
     public void deleteCurrent() {
         memoDao.DeleteMemo(list.get(deleteId));
         list.remove(deleteId);
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(deleteId, 1);
         if (getList().size() == 0) {
             nullListener.setNull();
         }
@@ -130,5 +126,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.Memo_ViewHolde
             memo_saveTime = itemView.findViewById(R.id.memo_save_time);
             memo_menu = itemView.findViewById(R.id.memo_menu);
         }
+
     }
 }

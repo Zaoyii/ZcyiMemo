@@ -41,7 +41,7 @@ dependencies {
     implementation "androidx.room:room-runtime:2.4.3"
     annotationProcessor "androidx.room:room-compiler:2.4.3"
 
-    //https://github.com/gzu-liyujiang/AndroidPicker 时间选择器
-
+    //https://github.com/gzu-liyujiang/AndroidPicker 选择器
     implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.11'
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:ImagePicker:4.1.11'
 }

@@ -72,6 +72,7 @@
             android:layout_marginEnd="10dp"
             android:background="@null"
             android:gravity="top"
+
             android:hint="@string/title"
             android:maxLength="20"
             android:padding="10dp"
@@ -86,18 +87,68 @@
             android:background="@color/underline" />
     </LinearLayout>
 
-
-    <EditText
-        android:id="@+id/Memo_content"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/Memo_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:gravity="top"
+                android:hint="@string/addMemoHint"
+                android:padding="10dp" />
+
+            <ImageView
+                android:id="@+id/insert_image"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        android:background="@null"
-        android:gravity="top"
-        android:hint="@string/addMemoHint"
-        android:padding="10dp" />
+        android:background="@color/underline" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/pick_image"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/image" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 </LinearLayout>

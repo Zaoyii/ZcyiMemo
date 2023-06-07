@@ -5,19 +5,27 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.gzuliyujiang.imagepicker.ActivityBuilder;
+import com.github.gzuliyujiang.imagepicker.CropImageView;
+import com.github.gzuliyujiang.imagepicker.ImagePicker;
+import com.github.gzuliyujiang.imagepicker.PickCallback;
 import com.zcyi.rorschach.Dao.MemoDao;
 import com.zcyi.rorschach.DataBase.BaseRoomDatabase;
 import com.zcyi.rorschach.DataBase.InstanceDatabase;
@@ -33,6 +41,8 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
 
     private EditText Memo_title;
     private EditText Memo_content;
+    private ImageView imagePicker;
+    private ImageView imageInsert;
 
     private String oldTitle;
     private String oldContent;
@@ -43,6 +53,8 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     String createTime;
     Memo memo;
     AlertDialog.Builder Exit;
+    Uri imgUri;
+    String imgPath;
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     boolean isSaved = false;
@@ -65,6 +77,9 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                 if (submit()) {
                     finish();
                 }
+                break;
+            case R.id.pick_image:
+                showPickMenu(imagePicker);
                 break;
         }
     }
@@ -90,13 +105,15 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         if (!isSaved) {
             String title = Memo_title.getText().toString().trim();
             String content = Memo_content.getText().toString().trim();
-            memoDao.addMemo(new Memo(title, content, createTime, simpleDateFormat.format(new Date(System.currentTimeMillis()))));
+            memoDao.addMemo(new Memo(title, content, imgPath, createTime, simpleDateFormat.format(new Date(System.currentTimeMillis()))));
             Log.e(Constant.TAG, "saveMessage: 调用add");
         } else {
             if (!(oldTitle.equals(Memo_title.getText().toString().trim()) && oldContent.equals(Memo_content.getText().toString().trim()))) {
                 memo.setTitle(Memo_title.getText().toString().trim());
                 memo.setContent(Memo_content.getText().toString().trim());
                 memo.setSaveTime(simpleDateFormat.format(new Date(System.currentTimeMillis())));
+                memo.setImage(imgPath);
+                System.out.println(imgPath+"-=----=-=--=");
                 memoDao.updateMemo(memo);
                 System.out.println(memo.getMemoId() + "--==--=-===--=");
                 List<Memo> memos = memoDao.selectAll();
@@ -109,7 +126,6 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initView() {
-        UtilMethod.changeStatusBarFrontColor(true, this);
         //基础UI控件
         UtilMethod.changeStatusBarFrontColor(true, this);
         ImageView header_back = findViewById(R.id.header_back);
@@ -119,6 +135,8 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         Memo_title = findViewById(R.id.Memo_title);
         Memo_content = findViewById(R.id.Memo_content);
         TextView save_time = findViewById(R.id.save_time);
+        imagePicker = findViewById(R.id.pick_image);
+        imageInsert = findViewById(R.id.insert_image);
 
         //获取RoomDatabase实例
         baseRoomDatabase = InstanceDatabase.getInstance(this);
@@ -127,6 +145,8 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
         //设置点击事件
         header_back.setOnClickListener(this);
         header_save.setOnClickListener(this);
+        imagePicker.setOnClickListener(this);
+        imageInsert.setOnClickListener(this);
         oldContent = "";
         oldTitle = "";
         //设置header标题
@@ -151,6 +171,11 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
                 save_time.setText(memo.getSaveTime());
                 oldTitle = memo.getTitle();
                 oldContent = memo.getContent();
+                System.out.println("--------file://" + memo.getImage());
+                imageInsert.setImageURI(Uri.parse("file://" + memo.getImage()));
+                imgUri = Uri.parse(memo.getImage());
+
+
             }
         }
 
@@ -184,4 +209,78 @@ public class MemoInfoActivity extends AppCompatActivity implements View.OnClickL
             finish();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ImagePicker.getInstance().onActivityResult(this, requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ImagePicker.getInstance().onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    private void showPickMenu(View v) {
+        PopupMenu popupMenu = new PopupMenu(getApplication(), v);
+        popupMenu.setGravity(Gravity.START);
+        popupMenu.getMenuInflater().inflate(R.menu.memo_menu_pick, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.memo_gallery:
+                    onGallery(v);
+                    break;
+                case R.id.memo_camera:
+                    onCamera(v);
+                    break;
+
+            }
+            return false;
+        });
+        popupMenu.show();
+    }
+
+    public void onCamera(View view) {
+        ImagePicker.getInstance().startCamera(this, true, new PickCallback() {
+            @Override
+            public void onPermissionDenied(String[] permissions, String message) {
+
+                Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void cropConfig(ActivityBuilder builder) {
+                builder.setMultiTouchEnabled(true)
+                        .setGuidelines(CropImageView.Guidelines.ON_TOUCH);
+            }
+
+            @Override
+            public void onCropImage(@Nullable Uri imageUri) {
+                System.out.println(getApplication().getCacheDir() + "-=-=---=---=-");
+                System.out.println(imageUri + "-=-=---=---=-");
+                Toast.makeText(getApplication(), String.valueOf(imageUri), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void onGallery(View view) {
+        ImagePicker.getInstance().startGallery(this, false, new PickCallback() {
+            @Override
+            public void onPermissionDenied(String[] permissions, String message) {
+                Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPickImage(@Nullable Uri imageUri) {
+                Toast.makeText(getApplication(), String.valueOf(imageUri), Toast.LENGTH_SHORT).show();
+                imgUri = imageUri;
+                imageInsert.setImageURI(imgUri);
+                System.out.println();
+                imgPath = UtilMethod.getPath(getApplication(), imgUri);
+            }
+        });
+    }
+
 }

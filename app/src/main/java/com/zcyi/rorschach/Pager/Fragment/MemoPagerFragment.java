@@ -30,7 +30,6 @@ import com.zcyi.rorschach.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MemoPagerFragment extends Fragment implements View.OnClickListener {
 
@@ -54,6 +53,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     StaggeredGridLayoutManager staggeredManager;
     LinearLayoutManager linearManager;
     int listStyle;
+    List<Memo> memos;
 
     @Nullable
     @Override
@@ -81,7 +81,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     }
 
     private void init() {
-
         //get id
         add_memo = v.findViewById(R.id.memo_add);
         convert = v.findViewById(R.id.convert);
@@ -90,7 +89,8 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         memoRecycler = v.findViewById(R.id.memo_List_recycler);
         memoLin = v.findViewById(R.id.memo_list_lin);
         isnull = v.findViewById(R.id.Null);
-        sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences("zcyi", Context.MODE_PRIVATE);
+        memos = new ArrayList<>();
+        sharedPreferences = requireContext().getSharedPreferences("zcyi", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         //获取roomDataBase实例
         baseRoomDatabase = InstanceDatabase.getInstance(getContext());
@@ -110,24 +110,28 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
     }
 
     private void getMemoList() {
-        List<Memo> memos = memoDao.selectAll();
-        if (memos.size() > 0) {
-            memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao, () -> {
+        int size = memos.size();
+        memos = memoDao.selectAll();
+        if (size != memos.size()) {
+            if (memos.size() > 0) {
+                memoAdapter = new MemoAdapter(getContext(), (ArrayList<Memo>) memos, memoDao, () -> {
+                    isnull.setVisibility(View.VISIBLE);
+                    memoLin.setVisibility(View.GONE);
+                });
+                StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                memoRecycler.setAdapter(memoAdapter);
+
+                //隐藏无备忘录提示
+                isnull.setVisibility(View.GONE);
+                memoLin.setVisibility(View.VISIBLE);
+
+            } else {
+                //显示无备忘录提示，隐藏list
                 isnull.setVisibility(View.VISIBLE);
                 memoLin.setVisibility(View.GONE);
-            });
-            StaggeredGridLayoutManager memoManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-            memoRecycler.setAdapter(memoAdapter);
-
-            //隐藏无备忘录提示
-            isnull.setVisibility(View.GONE);
-            memoLin.setVisibility(View.VISIBLE);
-
-        } else {
-            //显示无备忘录提示，隐藏list
-            isnull.setVisibility(View.VISIBLE);
-            memoLin.setVisibility(View.GONE);
+            }
         }
+
     }
 
     @SuppressLint("NonConstantResourceId")
