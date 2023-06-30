@@ -100,10 +100,11 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         isEditing = false;
         staggeredManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         linearManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        getMemoList();
         //根据ListStyle改变list展示方式
         listStyle = sharedPreferences.getInt("ListStyle", -1);
+        getMemoList();
         if (memos.size() > 0) {
+            System.out.println("listStyle-----" + listStyle);
             changeListStyle();
         }
     }
@@ -119,7 +120,6 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                     memoLin.setVisibility(View.GONE);
                 });
                 memoRecycler.setAdapter(memoAdapter);
-                changeListStyle();
                 //隐藏无备忘录提示
                 isnull.setVisibility(View.GONE);
                 memoLin.setVisibility(View.VISIBLE);
@@ -143,6 +143,7 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
                 startActivity(intent);
                 break;
             case R.id.convert:
+                listStyle= listStyle==1? 0:1;
                 changeListStyle();
                 break;
         }
@@ -152,11 +153,9 @@ public class MemoPagerFragment extends Fragment implements View.OnClickListener 
         if (memos.size() != 0) {
             Log.e(TAG, "changeListStyle: " + listStyle);
             if (listStyle == 1) {
-                listStyle = 0;
                 memoAdapter.setSetImagePosition(0);
                 memoRecycler.setLayoutManager(staggeredManager);
             } else if (listStyle == 0) {
-                listStyle = 1;
                 memoAdapter.setSetImagePosition(1);
                 memoRecycler.setLayoutManager(linearManager);
             }
